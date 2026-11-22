@@ -1,37 +1,35 @@
-# PageRank Algorithm – Numerical Computation of the PageRank Vector
- 
-University project in **Business Mathematics** at **HTW Berlin**, by **Meryl Tchuinkeu** and **Armel Kenne**.
- 
-The project explains the mathematics behind Google's PageRank algorithm and implements it in Python on a small model internet of 10 web pages.
- 
-> The notebook is written in German.
- 
-## Overview
- 
-PageRank ranks web pages by importance. A page counts as important when **many pages, or important pages,** link to it. The model is based on a *random surfer*:
- 
-- with probability **α** the surfer follows a link on the current page;
-- with probability **1 − α** the surfer jumps to a random page.
-The PageRank value of a page is the long-run probability that the surfer is on that page.
- 
-## What the project covers
- 
-**Theory**
-- Hyperlink matrix **H** and the handling of **dangling nodes** (pages without outgoing links)
-- Construction of the **Google matrix**
-  $$G = \alpha\left(H + \tfrac{1}{n} a e^T\right) + (1-\alpha)\tfrac{1}{n} e e^T$$
-- Interpretation as a **Markov chain**; PageRank as its stationary distribution, i.e. the eigenvector of $G^T$ for eigenvalue 1
-- **Convergence** of the fixed-point iteration (power method), justified with the **Banach fixed-point theorem**
-- **Uniqueness** of the solution via **Perron–Frobenius** theory (G is a primitive stochastic matrix)
-- **Efficiency**: why the power method is preferred over Gaussian elimination, LU or QR for large, sparse matrices
-**Implementation**
-- Model internet with 10 pages, with page $S_{10}$ as a dangling node
-- Python / NumPy implementation of the Google matrix and the fixed-point iteration
-  $$\pi^{(k+1)} = G^T \pi^{(k)}$$
-- Uniform start vector, stopping criterion $\|\pi^{(k+1)} - \pi^{(k)}\|_1 < 10^{-12}$
-- Study of how the damping factor **α** affects the convergence speed
-## Link structure of the model internet
- 
+# PageRank Algorithm
+
+Ranking web pages by importance, the way Google does with PageRank.
+
+By Meryl Tchuinkeu and Armel Kenne. The notebook is written in German.
+
+## What is it for?
+
+A search engine finds thousands of pages for a query and has to decide which ones to show first. PageRank gives every page an importance score. The idea is simple: a page is important if many important pages link to it.
+
+To compute this, we imagine a person who surfs the web at random:
+
+- most of the time (probability α) they click a link on the current page,
+- sometimes (probability 1 − α) they jump to any page at random.
+
+A page's PageRank is the share of time this surfer spends on it in the long run.
+
+## What we did
+
+1. **Built a small model internet** of 10 pages. One page has no outgoing links, which needs special handling (a "dangling node").
+2. **Set up the Google matrix**, which describes the surfer's behaviour:
+
+   $$G = \alpha\left(H + \tfrac{1}{n} a e^T\right) + (1-\alpha)\tfrac{1}{n} e e^T$$
+
+   H holds the links between pages, and a marks the page without links.
+3. **Showed mathematically that the calculation always gives the same result**, whatever the starting point. We used Markov chains, the Banach fixed-point theorem and Perron–Frobenius theory.
+4. **Explained why this method is efficient**: each step needs only one matrix-vector product, so it also works for very large networks.
+5. **Implemented the calculation in Python with NumPy**, repeating $\pi^{(k+1)} = G^T \pi^{(k)}$ until the result stops changing (tolerance $10^{-12}$).
+6. **Compared the convergence speed** for different values of α.
+
+## The model internet
+
 | Page | Links to |
 |---|---|
 | S1 | S2, S5 |
@@ -43,25 +41,24 @@ The PageRank value of a page is the long-run probability that the surfer is on t
 | S7 | S1, S2, S6 |
 | S8 | S2, S6, S7 |
 | S9 | S5, S6, S8, S10 |
-| S10 | – (dangling node) |
- 
-## Usage
- 
+| S10 | no links |
+
+## How to run it
+
 ```bash
 pip install numpy jupyter
-jupyter notebook Projekt_Meryltchuinkeu_Thema_4.ipynb
+jupyter notebook PageRank.ipynb
 ```
- 
+
 ```python
 pi, iterations, error = berechne_pagerank(alpha=0.85)
 print(pi, iterations)
 ```
- 
-## Tech stack
- 
-Python · NumPy · Jupyter Notebook · Linear algebra · Markov chains
- 
+
+## Tools
+
+Python, NumPy, Jupyter Notebook
+
 ## Reference
- 
+
 Langville, A. N. & Meyer, C. D. (2006). *Google's PageRank and Beyond: The Science of Search Engine Rankings*. Princeton University Press.
- 
